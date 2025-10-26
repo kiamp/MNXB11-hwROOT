@@ -11,7 +11,7 @@ void write(){
     Int_t nEvents;
     nEvents = 2000;
 
-    Double_t px, py, pz;
+    Double_t px = 0.0, py = 0.0;
 
     for (Int_t i{0}; i<nEvents; i++){
         tree_ptr->GetEntry(i);
