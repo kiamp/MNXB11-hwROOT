@@ -1,27 +1,27 @@
 #include "bestclass.h"
 void write(){
-    std::unique_ptr<TFile> file_ptr( TFile::Open("tree_file.root") );
-    std::unique_ptr<TTree> tree_ptr(file_ptr->Get<TTree>("tree"));
+    Bestclass *bestobject{nullptr};
 
-    Int_t variable;
-    tree_ptr->SetBranchAddress("bestBranch", &variable);
+    TFile *file = new TFile("tree_file.root", "recreate");
+    TTree *tree = new TTree("tree","Tree with bestclass objects" );
 
-    TH2D* hist = new TH2D("hist","pxPyHist", 50, 3, 3, 50, 3, 3);
+    tree->Branch("bestobject", &bestobject);
 
-    Int_t nEvents;
-    nEvents = 2000;
+    int nEvents {1000};
 
-    Double_t px = 0.0, py = 0.0;
+    double px, py, pz;
 
-    for (Int_t i{0}; i<nEvents; i++){
-        tree_ptr->GetEntry(i);
-        hist->Fill(px,py);
+    for (int i{0}; i<nEvents; i++){
+        px = gRandom->Gaus(0,0.5);
+        py = gRandom->Gaus(1,0.5);
+        pz = gRandom->Gaus(0.5,0.2);
+
+        bestobject = new Bestclass(px, py, pz);
+
+        tree->Fill();
+        delete bestobject;
     }
 
-    hist->Draw();
-
-    TCanvas* canvas = new TCanvas("canvas", "px*py and pz");
-    tree_ptr->Draw("px*py:pz", "magn<1");
-    delete hist;
-    delete canvas;
+    file->Write();
+    file->Close();
 }

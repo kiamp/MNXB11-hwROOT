@@ -7,18 +7,22 @@
 #include<TH2.h>
 #include<TCanvas.h>
 #include<TRandom.h>
+#include<TAttMarker.h>
 
-class bestclass : public TObject {
+class Bestclass : public TObject {
     public:
-        bestclass();
-        bestclass(Double_t px_, Double_t py_, Double_t pz_);
-        virtual ~bestclass();
+        Bestclass();
+        Bestclass(double px_, double py_, double pz_);
+        virtual ~Bestclass();
 
-        void magnitude(Double_t pxm, Double_t pym, Double_t pzm);
+        void magnitude(double pxm, double pym, double pzm);
+
+        double px, py, pz;
+
     
     private:
-        Double_t px, py, pz;
-        Double_t magn; //magnitude variable
-        ClassDef(bestclass, 1);
+        double magn; //magnitude variable
+    
+    ClassDef(Bestclass, 1);
 
 };

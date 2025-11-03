@@ -1,27 +1,33 @@
 #include "bestclass.h"
 void read(){
-    std::unique_ptr<TFile> file_ptr( TFile::Open("tree_file.root") );
-    std::unique_ptr<TTree> tree_ptr(file_ptr->Get<TTree>("tree"));
 
-    Int_t variable;
-    tree_ptr->SetBranchAddress("bestBranch", &variable);
+    Bestclass *bestobject{nullptr};
 
-    TH2D* hist = new TH2D("hist","pxPyHist", 50, 3, 3, 50, 3, 3);
+    TFile *file = new TFile("tree_file.root");
+    TTree *tree = file->Get<TTree>("tree");
 
-    Int_t nEvents;
-    nEvents = 2000;
+    tree->SetBranchAddress("bestobject", &bestobject);
 
-    Double_t px, py, pz;
+    int nEvents = tree->GetEntries();
 
-    for (Int_t i{0}; i<nEvents; i++){
-        tree_ptr->GetEntry(i);
-        hist->Fill(px,py);
+    double px = 0, py = 0, pz = 0;
+
+    TH2D *hist = new TH2D("hist","pxPyHist;px;py", 50, -4, 4, 50, -4, 4);
+
+    for (int i{0}; i < nEvents; i++){
+        tree->GetEntry(i);
+        hist->Fill(bestobject->px,bestobject->py);
     }
 
+    TCanvas *canvas1 = new TCanvas("canvas1", "px vs py", 800, 600);
     hist->Draw();
+    canvas1->SaveAs("px_vs_py.png");
 
-    TCanvas* canvas = new TCanvas("canvas", "px*py and pz");
-    tree_ptr->Draw("px*py:pz", "magn<1");
-    delete hist;
-    delete canvas;
+    TCanvas* canvas2 = new TCanvas("canvas1", "px*py and pz", 800, 600);
+    tree->Draw("px*py:pz", "sqrt(px*px+py*py+pz*pz) <2");
+    canvas2->SaveAs("pxpy_vs_pz.png");
+    
+    delete file;
+    delete canvas1;
+    delete canvas2;
 }
